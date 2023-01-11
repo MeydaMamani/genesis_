@@ -45,7 +45,12 @@ class RouteServiceProvider extends ServiceProvider
 
             Route::middleware('web')
                 ->namespace($this->namespace)
-                ->group(base_path('routes/web.php'));
+                ->group(function(){
+                    require base_path('routes/FED/child/child.php');
+                    require base_path('routes/FED/pregnant/pregnant.php');
+                    require base_path('routes/FED/professionals/professionals.php');
+                    require base_path('routes/FED/sisCovid/sisCovid.php');
+                });
         });
     }
 
