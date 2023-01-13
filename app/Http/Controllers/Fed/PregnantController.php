@@ -1,16 +1,17 @@
 <?php
+namespace App\Http\Controllers\Fed;
 
-namespace App\Http\Controllers;
-
-use App\Exports\BateriaExport;
+use App\Exports\Fed\Pregnant\BateriaExport;
 use App\Exports\SospechaVioExport;
 use App\Exports\UsersNewExport;
+
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use Maatwebsite\Excel\Concerns\FromView;
 
-class FedController extends Controller
+class PregnantController extends Controller
 {
     public function indexBateria(Request $request) {
         return view('fed/Pregnant/Bateria/index');
@@ -22,16 +23,14 @@ class FedController extends Controller
         $anio = $request->anio;
         $mes = $request->mes;
 
-        if (strlen($mes) == 1){ $mes2 = '0'.$mes; }
-        else{ $mes2 = $mes; }
-
         if ($red_1 == '01') { $red = 'PASCO'; }
-        elseif ($red_1 == '02') { $red = 'DANIEL CARRION'; }
+        elseif ($red_1 == '02') { $red = 'DANIEL ALCIDES CARRION'; }
         elseif ($red_1 == '03') { $red = 'OXAPAMPA'; }
 
         if($red_1 == 'TODOS'){
             $nominal = DB::table('dbo.CONSOLIDADO_BATERIA')
-                        ->select('*', (DB::raw("CASE WHEN (TMZ_ANEMIA IS NULL OR SIFILIS IS NULL OR VIH IS NULL OR BACTERIURIA IS NULL) THEN 'NO' WHEN (TMZ_ANEMIA=SIFILIS AND TMZ_ANEMIA=VIH AND TMZ_ANEMIA=BACTERIURIA) THEN 'SI' ELSE 'NO' END 'MIDE'")))
+                        ->select('*', (DB::raw("CASE WHEN (CAPTADA IS NULL OR TMZ_ANEMIA IS NULL OR SIFILIS IS NULL OR VIH IS NULL OR BACTERIURIA IS NULL) THEN 'NO'
+                                WHEN (TMZ_ANEMIA=CAPTADA AND TMZ_ANEMIA=SIFILIS AND TMZ_ANEMIA=VIH AND TMZ_ANEMIA=BACTERIURIA) THEN 'SI' ELSE 'NO' END 'MIDE'")))
                         ->where('ANIO', $anio) ->where('MES', $mes)
                         ->orderBy('PROVINCIA', 'ASC') ->orderBy('DISTRITO', 'ASC') ->orderBy('IPRESS', 'ASC')
                         ->get();
@@ -56,7 +55,8 @@ class FedController extends Controller
         }
         else if($red_1 != 'TODOS' && $dist == 'TODOS'){
             $nominal = DB::table('dbo.CONSOLIDADO_BATERIA')
-                        ->select('*', (DB::raw("CASE WHEN (TMZ_ANEMIA IS NULL OR SIFILIS IS NULL OR VIH IS NULL OR BACTERIURIA IS NULL) THEN 'NO' WHEN (TMZ_ANEMIA=SIFILIS AND TMZ_ANEMIA=VIH AND TMZ_ANEMIA=BACTERIURIA) THEN 'SI' ELSE 'NO' END 'MIDE'")))
+                        ->select('*', (DB::raw("CASE WHEN (CAPTADA IS NULL OR TMZ_ANEMIA IS NULL OR SIFILIS IS NULL OR VIH IS NULL OR BACTERIURIA IS NULL) THEN 'NO'
+                                WHEN (TMZ_ANEMIA=CAPTADA AND TMZ_ANEMIA=SIFILIS AND TMZ_ANEMIA=VIH AND TMZ_ANEMIA=BACTERIURIA) THEN 'SI' ELSE 'NO' END 'MIDE'")))
                         ->where('ANIO', $anio) ->where('MES', $mes) ->where('PROVINCIA', $red)
                         ->orderBy('PROVINCIA', 'ASC') ->orderBy('DISTRITO', 'ASC') ->orderBy('IPRESS', 'ASC')
                         ->get();
@@ -83,7 +83,8 @@ class FedController extends Controller
             // if($dist == 'CONSTITUCIÓN'){ $dist = 'CONSTITUCION'; }
             // if($dist == 'SAN FRANCISCO DE ASIS DE YARUSYACAN'){ $dist = 'SAN FCO DE ASIS DE YARUSYACAN'; }
             $nominal = DB::table('dbo.CONSOLIDADO_BATERIA')
-                        ->select('*', (DB::raw("CASE WHEN (TMZ_ANEMIA IS NULL OR SIFILIS IS NULL OR VIH IS NULL OR BACTERIURIA IS NULL) THEN 'NO' WHEN (TMZ_ANEMIA=SIFILIS AND TMZ_ANEMIA=VIH AND TMZ_ANEMIA=BACTERIURIA) THEN 'SI' ELSE 'NO' END 'MIDE'")))
+                        ->select('*', (DB::raw("CASE WHEN (CAPTADA IS NULL OR TMZ_ANEMIA IS NULL OR SIFILIS IS NULL OR VIH IS NULL OR BACTERIURIA IS NULL) THEN 'NO'
+                                WHEN (TMZ_ANEMIA=CAPTADA AND TMZ_ANEMIA=SIFILIS AND TMZ_ANEMIA=VIH AND TMZ_ANEMIA=BACTERIURIA) THEN 'SI' ELSE 'NO' END 'MIDE'")))
                         ->where('ANIO', $anio) ->where('MES', $mes) ->where('DISTRITO', $dist)
                         ->orderBy('PROVINCIA', 'ASC') ->orderBy('DISTRITO', 'ASC') ->orderBy('IPRESS', 'ASC')
                         ->get();
@@ -115,40 +116,12 @@ class FedController extends Controller
     }
 
     public function printBateria(Request $request){
-        $red_1 = $request->r; $dist = $request->d; $anio = $request->a; $mes = $request->m;
+        $r = $request->r;
+        $d = $request->d;
+        $a = $request->a;
+        $m = $request->m;
 
-        if (strlen($mes) == 1){ $mes2 = '0'.$mes; }
-        else{ $mes2 = $mes; }
-
-        if ($red_1 == '01') { $red = 'PASCO'; }
-        elseif ($red_1 == '02') { $red = 'DANIEL CARRION'; }
-        elseif ($red_1 == '03') { $red = 'OXAPAMPA'; }
-
-        if($red_1 == 'TODOS'){
-            $nominal = DB::table('dbo.CONSOLIDADO_BATERIA')
-                        ->select('*', (DB::raw("CASE WHEN (TMZ_ANEMIA IS NULL OR SIFILIS IS NULL OR VIH IS NULL OR BACTERIURIA IS NULL) THEN 'NO' WHEN (TMZ_ANEMIA=SIFILIS AND TMZ_ANEMIA=VIH AND TMZ_ANEMIA=BACTERIURIA) THEN 'SI' ELSE 'NO' END 'MIDE'")))
-                        ->where('ANIO', $anio) ->where('MES', $mes)
-                        ->orderBy('PROVINCIA', 'ASC') ->orderBy('DISTRITO', 'ASC') ->orderBy('IPRESS', 'ASC')
-                        ->get();
-        }
-        else if($red_1 != 'TODOS' && $dist == 'TODOS'){
-            $nominal = DB::table('dbo.CONSOLIDADO_BATERIA')
-                        ->select('*', (DB::raw("CASE WHEN (TMZ_ANEMIA IS NULL OR SIFILIS IS NULL OR VIH IS NULL OR BACTERIURIA IS NULL) THEN 'NO' WHEN (TMZ_ANEMIA=SIFILIS AND TMZ_ANEMIA=VIH AND TMZ_ANEMIA=BACTERIURIA) THEN 'SI' ELSE 'NO' END 'MIDE'")))
-                        ->where('ANIO', $anio) ->where('MES', $mes) ->where('PROVINCIA', $red)
-                        ->orderBy('PROVINCIA', 'ASC') ->orderBy('DISTRITO', 'ASC') ->orderBy('IPRESS', 'ASC')
-                        ->get();
-        }
-        else if($dist != 'TODOS'){
-            if($dist == 'CONSTITUCIÓN'){ $dist = 'CONSTITUCION'; }
-            if($dist == 'SAN FRANCISCO DE ASIS DE YARUSYACAN'){ $dist = 'SAN FCO DE ASIS DE YARUSYACAN'; }
-            $nominal = DB::table('dbo.CONSOLIDADO_BATERIA')
-                        ->select('*', (DB::raw("CASE WHEN (TMZ_ANEMIA IS NULL OR SIFILIS IS NULL OR VIH IS NULL OR BACTERIURIA IS NULL) THEN 'NO' WHEN (TMZ_ANEMIA=SIFILIS AND TMZ_ANEMIA=VIH AND TMZ_ANEMIA=BACTERIURIA) THEN 'SI' ELSE 'NO' END 'MIDE'")))
-                        ->where('ANIO', $anio) ->where('MES', $mes) ->where('DISTRITO', $dist)
-                        ->orderBy('PROVINCIA', 'ASC') ->orderBy('DISTRITO', 'ASC') ->orderBy('IPRESS', 'ASC')
-                        ->get();
-        }
-
-        return Excel::download(new BateriaExport($nominal, $anio, $request->nameMonth, $request->his), 'DEIT_PASCO CG_FT_BATERIA_COMPLETA.xlsx');
+        return Excel::download(new BateriaExport($r, $d, $a, $m), 'DEIT_PASCO CG_FT_BATERIA_COMPLETA.xlsx');
     }
 
     public function indexTratamiento(Request $request) {

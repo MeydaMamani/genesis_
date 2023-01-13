@@ -1,19 +1,17 @@
 <?php
+namespace App\Http\Controllers\Main;
 
-namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
 
 class MainController extends Controller
 {
     public function province() {
-        // $invoices = DB::connection('BDHIS_MINSA')->table('maestro_his_establecimiento')->get();
         $provinces = DB::connection('BDHIS_MINSA')->table('MAESTRO_HIS_ESTABLECIMIENTO')
-                    ->select('Codigo_Red', 'Red')
-                    ->where('Descripcion_Sector', '=', 'GOBIERNO REGIONAL')
-                    ->where('Departamento', '=', 'PASCO')
-                    ->where('Codigo_Red', '<>', '00')
+                    ->select('Codigo_Red', 'Red') ->where('Descripcion_Sector', '=', 'GOBIERNO REGIONAL')
+                    ->where('Departamento', '=', 'PASCO') ->where('Codigo_Red', '<>', '00')
                     ->groupBy('Codigo_Red', 'Red')
                     ->orderBy('Codigo_Red', 'ASC')
                     ->get();
@@ -67,7 +65,6 @@ class MainController extends Controller
     }
 
     public function datePadronNominal() {
-        // DB::connection('BDHIS_MINSA')->table('MAESTRO_HIS_ESTABLECIMIENTO')
         $query =DB::connection('BD_PADRON_NOMINAL')->table('NOMINAL_PADRON_NOMINAL')
                     ->select((DB::raw('MAX(FECHA_MODIFICACION_REGISTRO) AS DATE_MODIFY')))
                     ->get();

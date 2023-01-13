@@ -1,18 +1,18 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\FedController;
+use App\Http\Controllers\Fed\PregnantController;
 
-Route::get('/bateria', [FedController::class, 'indexBateria']);
-Route::post('/bateria/list', [FedController::class, 'listBateria']);
-Route::get('/bateria/print', [FedController::class, 'printBateria']);
+Route::get('/bateria', [PregnantController::class, 'indexBateria']);
+Route::post('/bateria/list', [PregnantController::class, 'listBateria']);
+Route::get('/bateria/print', [PregnantController::class, 'printBateria']);
 
-Route::get('/tratamiento', [FedController::class, 'indexTratamiento']);
-Route::post('/tratamiento/listSos', [FedController::class, 'listSospecha']);
-Route::get('/tratamiento/printSos', [FedController::class, 'printSospecha']);
-Route::post('/tratamiento/listTrat', [FedController::class, 'listTratamiento']);
-Route::get('/tratamiento/printSos', [FedController::class, 'printSospecha']);
+Route::get('/tratamiento', [PregnantController::class, 'indexTratamiento']);
+Route::post('/tratamiento/listSos', [PregnantController::class, 'listSospecha']);
+Route::get('/tratamiento/printSos', [PregnantController::class, 'printSospecha']);
+Route::post('/tratamiento/listTrat', [PregnantController::class, 'listTratamiento']);
+Route::get('/tratamiento/printSos', [PregnantController::class, 'printSospecha']);
 
-Route::get('/newUsers', [FedController::class, 'indexNewUsers']);
-Route::post('/newUsers/list', [FedController::class, 'listNewUsers']);
-Route::get('/newUsers/print', [FedController::class, 'printNewUsers']); 
+Route::get('/newUsers', [PregnantController::class, 'indexNewUsers']);
+Route::post('/newUsers/list', [PregnantController::class, 'listNewUsers']);
+Route::get('/newUsers/print', [PregnantController::class, 'printNewUsers']);

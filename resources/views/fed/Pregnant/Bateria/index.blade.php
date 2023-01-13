@@ -7,7 +7,7 @@
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-sm-8">
-                            <h5 class="mb-0">Gestantes de Bateria Completa CG01 - <span class="name_mes">[[ nameMonth ]]</span> <span class="name_anio">[[ nameYear ]]</span></h5>
+                            <h5 class="mb-0">Gestantes con Bateria Completa CG01 - <span class="name_mes">[[ nameMonth ]]</span> <span class="name_anio">[[ nameYear ]]</span></h5>
                         </div>
                         <div class="col-sm-4">
                             <ol class="breadcrumb float-sm-right font-14">
@@ -162,10 +162,6 @@
                                         <div class="col-md-12 mb-1 p-0">
                                             <select class="form-control select2 show-tick" style="width: 100%;" v-model="anio" id="anio" name="anio" v-select2>
                                                 <option value="">Seleccione año</option>
-                                                <option value="2019">2019</option>
-                                                <option value="2020">2020</option>
-                                                <option value="2021">2021</option>
-                                                <option value="2022">2022</option>
                                             </select>
                                         </div>
                                         <div class="col-md-12 mb-1 p-0">
@@ -305,7 +301,7 @@
             </div>
         </div>
     </div>
-    <script src="./js/bateria.js"></script>
+    <script src="./js/fed/pregnant/vue/bateria.js"></script>
     <script>
         $(document).ready(function(){
             $("#search").click();

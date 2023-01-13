@@ -36,9 +36,43 @@ const appPrematuros = new Vue({
     },
     created: function() {
         this.filtersProv();
-        this.dateHis();
+        this.listYears();
     },
     methods: {
+        filtersProv: function() {
+            axios.post('provinces')
+            .then(respuesta => {
+                this.provinces = respuesta.data;
+                console.log(this.provinces);
+                setTimeout(() => $('.show-tick').selectpicker('refresh'));
+
+            }).catch(e => {
+                this.errors.push(e)
+            })
+        },
+
+        filtersDistricts() {
+            this.districts = [];
+            axios({
+                method: 'POST',
+                url: 'districts',
+                data: { "id": this.red },
+            })
+            .then(respuesta => {
+                this.districts = respuesta.data;
+                setTimeout(() => $('.show-tick').selectpicker('refresh'));
+
+            }).catch(e => {
+                this.errors.push(e)
+            })
+        },
+
+        listYears: function(){
+            var n = (new Date()).getFullYear()
+            var select = document.getElementById("anio");
+            for(var i = 2021; i<=n; i++)select.options.add(new Option(i,i));
+        },
+
         listBateria: function() {
             $(".nominalTable").removeAttr("id");
             $(".nominalTable").attr("id","bateria_completa");
@@ -92,45 +126,6 @@ const appPrematuros = new Vue({
             // }
         },
 
-        filtersProv: function() {
-            axios.post('prov')
-            .then(respuesta => {
-                this.provinces = respuesta.data;
-                setTimeout(() => $('.show-tick').selectpicker('refresh'));
-
-            }).catch(e => {
-                this.errors.push(e)
-            })
-        },
-
-        dateHis: function() {
-            axios.post('pn')
-            .then(respuesta => {
-                getDate = new Date();
-                this.date_his = getDate.toISOString().split('T')[0];
-                setTimeout(() => $('.show-tick').selectpicker('refresh'));
-
-            }).catch(e => {
-                this.errors.push(e)
-            })
-        },
-
-        filtersDistricts() {
-            this.districts = [];
-            axios({
-                method: 'POST',
-                url: 'distr',
-                data: { "id": this.red },
-            })
-            .then(respuesta => {
-                this.districts = respuesta.data;
-                setTimeout(() => $('.show-tick').selectpicker('refresh'));
-
-            }).catch(e => {
-                this.errors.push(e)
-            })
-        },
-
         listNoCumplen() {
             $(".nominalTable").removeAttr("id");
             $(".nominalTable").attr("id","no_cumplen");
@@ -157,10 +152,14 @@ const appPrematuros = new Vue({
             var mes = $('#mes').val();
 
             const getDate = new Date();
-            red == '' ? red = "TODOS" : red;    dist == '' ? dist = "TODOS" : dist;
+            red == '' ? red = "TODOS" : red; dist == '' ? dist = "TODOS" : dist;
             anio == '' ? anio = getDate.getFullYear() : anio;     mes == '' ? mes = getDate.getMonth() : mes;
+
+            console.log(red, dist, anio, mes);
+
             url_ = window.location.origin + window.location.pathname + '/print?r=' + (red) + '&d=' + (dist) + '&a=' + (anio)
-            + '&m=' + (mes)  + '&nameMonth=' + (this.nameMonth) + '&his=' + (this.date_his);
+            + '&m=' + (mes);
+            console.log(url_);
             window.open(url_,'_blank');
         },
     }

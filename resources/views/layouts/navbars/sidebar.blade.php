@@ -2,7 +2,7 @@
 <aside class="main-sidebar sidebar-light-primary elevation-4">
     <a href="#" class="brand-link">
         <img src="./img/logo2.png" alt="AdminLTE Logo" class="brand-image elevation-3 img-circle" style="opacity: .8">
-        <span class="brand-text text-white">DEIT - PASCO</span>
+        <span class="brand-text text-white">GENESIS</span>
     </a>
 
     <!-- Sidebar -->

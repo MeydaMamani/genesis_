@@ -24,9 +24,6 @@
                 <td colspan="14" style="font-size: 18px; border: 3px solid #807d7d; font-weight: 500; text-align: center;">Gestantes de Bateria Completa CG01 - {{ $nameMonth }} {{ $anio }} </td>
             </tr>
             <tr><td colspan="14"></td></tr>
-            <tr>
-                <td colspan="14" style="font-size: 10px; color: #999595; font-weight: 500; border: 10px solid #999595;"><b>Fuente: </b> BD HisMinsa con Fecha {{ $his }} a las 08:30 horas</td>
-            </tr>
             <tr><td colspan="14"></td></tr>
         </thead>
         <thead>
@@ -44,12 +41,12 @@
                 <th style="background: #8EA9DB; font-weight: 500; text-align: center; border: 3px solid #A6A6A6;">Sifilis</th>
                 <th style="background: #8EA9DB; font-weight: 500; text-align: center; border: 3px solid #A6A6A6;">VIH</th>
                 <th style="background: #8EA9DB; font-weight: 500; text-align: center; border: 3px solid #A6A6A6;">Bacteriuria</th>
-                <th style="background: #c9d0e2; font-weight: 500; text-align: center; border: 3px solid #A6A6A6;">Cumplen</th>
+                <th style="background: #FFFF00; font-weight: 500; text-align: center; border: 3px solid #A6A6A6;">Cumplen</th>
             </tr>
         </thead>
         <tbody>
             {{-- <td><img src="{{URL::asset('/images/avartar.png')}}" /></td> --}}
-            @foreach($bateria as $pr)
+            @foreach($nominal as $pr)
                 <tr>
                     <td style="text-align: center; border: 3px solid #A6A6A6;">{{ $loop->iteration }}</td>
                     <td style="border: 3px solid #A6A6A6;">{{ $pr->PROVINCIA }}</td>
