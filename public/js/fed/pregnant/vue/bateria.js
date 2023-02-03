@@ -12,7 +12,7 @@ Vue.directive('select2', {
     },
 });
 
-const appPrematuros = new Vue({
+const appFed = new Vue({
     delimiters: ['[[', ']]'],
     el: '#appBateria',
     data: {
@@ -37,13 +37,13 @@ const appPrematuros = new Vue({
     created: function() {
         this.filtersProv();
         this.listYears();
+        this.bateriaActually();
     },
     methods: {
         filtersProv: function() {
             axios.post('provinces')
             .then(respuesta => {
                 this.provinces = respuesta.data;
-                console.log(this.provinces);
                 setTimeout(() => $('.show-tick').selectpicker('refresh'));
 
             }).catch(e => {
@@ -68,62 +68,78 @@ const appPrematuros = new Vue({
         },
 
         listYears: function(){
-            var n = (new Date()).getFullYear()
+            const getDate = new Date();
+            var n = getDate.getFullYear();
             var select = document.getElementById("anio");
             for(var i = 2021; i<=n; i++)select.options.add(new Option(i,i));
+
+            this.date_his = getDate.toISOString().split('T')[0];
+            setTimeout(() => $('.show-tick').selectpicker('refresh'));
         },
 
-        listBateria: function() {
+        // para carga de datos del mes actual
+        bateriaActually: function(){
+            const getDate = new Date();
+            const currentData = { "red": "TODOS", "distrito": "TODOS", "anio": getDate.getFullYear(), "mes": getDate.getMonth()+1 }
+            this.listBateria(currentData);
+        },
+
+        // para carga de datos según mes de busqueda
+        searchBateria: function(){
+            if (this.red == '') { toastr.error('Seleccione una Red', null, { "closeButton": true, "progressBar": true }); }
+            else if (this.distrito == '') { toastr.error('Seleccione un Distrito', null, { "closeButton": true, "progressBar": true }); }
+            else if (this.anio == '') { toastr.error('Seleccione un Año', null, { "closeButton": true, "progressBar": true }); }
+            else if (this.mes == '') { toastr.error('Seleccione un Mes', null, { "closeButton": true, "progressBar": true }); }
+            else {
+                const formData = $("#formulario").serialize();
+                this.listBateria(formData);
+            }
+        },
+
+        listBateria: function(data) {
             $(".nominalTable").removeAttr("id");
             $(".nominalTable").attr("id","bateria_completa");
-            this.cumple=0; this.no_cumple=0; this.total=0;
+            $(".overlay-wrapper").show();
+            $(".overlay-wrapper").html('<div class="overlay"><i class="fas fa-3x fa-sync-alt fa-spin"></i><div class="text-bold pt-1 pl-3">Cargando...</div></div>');
             const getDate = new Date();
-            const currentData = { "red": "TODOS", "distrito": "TODOS", "anio": getDate.getFullYear(), "mes": getDate.getMonth()-1 }
-            const formData = $("#formulario").serialize();
-            this.red == '' ? data = currentData : data = formData;
+            axios({
+                method: 'POST',
+                url: 'bateria/list',
+                data: data,
+            })
+            .then(response => {
+                this.cumple=0; this.no_cumple=0; this.total=0;
+                this.lists = response.data[0];
+                this.listsResum = response.data[1];
+                this.advanceReg = response.data[2];
+                for (let i = 0; i < this.lists.length; i++) {
+                    this.total++;
+                    this.lists[i].MIDE == 'SI' ? this.cumple++ : this.no_cumple++;
+                }
 
-            // if (this.red == '') { toastr.error('Seleccione una Red', null, { "closeButton": true, "progressBar": true }); }
-            // else if (this.distrito == '') { toastr.error('Seleccione un Distrito', null, { "closeButton": true, "progressBar": true }); }
-            // else if (this.anio == '') { toastr.error('Seleccione un Año', null, { "closeButton": true, "progressBar": true }); }
-            // else if (this.mes == '') { toastr.error('Seleccione un Mes', null, { "closeButton": true, "progressBar": true }); }
-            // else{
-                axios({
-                    method: 'POST',
-                    url: 'bateria/list',
-                    data: data,
-                })
-                .then(response => {
-                    this.lists = response.data[0];
-                    this.listsResum = response.data[1];
-                    this.advanceReg = response.data[2];
-                    for (let i = 0; i < this.lists.length; i++) {
-                        this.total++;
-                        this.lists[i].MIDE == 'SI' ? this.cumple++ : this.no_cumple++;
-                    }
+                for (let j = 0; j < this.listsResum.length; j++) {
+                    var avance = (this.listsResum[j].NUMERADOR/this.listsResum[j].DENOMINADOR)*100;
+                    avance % 1 != 0 ? this.listsResum[j].AVANCE = avance.toFixed(1) : this.listsResum[j].AVANCE = avance;
+                }
 
-                    for (let j = 0; j < this.listsResum.length; j++) {
-                        var avance = (this.listsResum[j].NUMERADOR/this.listsResum[j].DENOMINADOR)*100;
-                        avance % 1 != 0 ? this.listsResum[j].AVANCE = avance.toFixed(1) : this.listsResum[j].AVANCE = avance;
-                    }
+                for (let k = 0; k < this.advanceReg.length; k++) {
+                    var a = (this.advanceReg[k].NUM/this.advanceReg[k].DEN)*100;
+                    a % 1 != 0 ? this.advanceReg[k].ADVANCE = a.toFixed(1) : this.advanceReg[k].ADVANCE = a;
+                }
 
-                    for (let k = 0; k < this.advanceReg.length; k++) {
-                        var a = (this.advanceReg[k].NUM/this.advanceReg[k].DEN)*100;
-                        a % 1 != 0 ? this.advanceReg[k].ADVANCE = a.toFixed(1) : this.advanceReg[k].ADVANCE = a;
-                    }
+                this.anio == '' ? this.nameYear = getDate.getFullYear() : this.nameYear = this.anio;
+                this.mes == '' ? mes2 = getDate.getMonth() + 1 : mes2 = this.mes;
+                this.nameMonth = new Intl.DateTimeFormat('es-ES', { month: 'long'}).format( getDate.setMonth(mes2 - 1));
+                this.nameMonth = this.nameMonth.charAt(0).toUpperCase() + this.nameMonth.slice(1);
 
-                    this.anio == '' ? this.nameYear = getDate.getFullYear() : this.nameYear = this.anio;
-                    this.mes == '' ? this.mes = getDate.getMonth() + 1 : this.mes;
-                    this.nameMonth = new Intl.DateTimeFormat('es-ES', { month: 'long'}).format( getDate.setMonth(this.mes - 1));
-                    this.nameMonth = this.nameMonth.charAt(0).toUpperCase() + this.nameMonth.slice(1);
+                this.avance = ((this.cumple / this.total) * 100).toFixed(1);
+                $('.knob').val(this.avance + '%').trigger('change');
+                $('.footable-page a').filter('[data-page="0"]').trigger('click');
+                $(".overlay-wrapper").hide();
 
-                    this.avance = ((this.cumple / this.total) * 100).toFixed(1);
-                    $('.knob').val(this.avance + '%').trigger('change');
-                    $('.footable-page a').filter('[data-page="0"]').trigger('click');
-
-                }).catch(e => {
-                    this.errors.push(e)
-                })
-            // }
+            }).catch(e => {
+                this.errors.push(e)
+            })
         },
 
         listNoCumplen() {
@@ -153,13 +169,9 @@ const appPrematuros = new Vue({
 
             const getDate = new Date();
             red == '' ? red = "TODOS" : red; dist == '' ? dist = "TODOS" : dist;
-            anio == '' ? anio = getDate.getFullYear() : anio;     mes == '' ? mes = getDate.getMonth() : mes;
+            anio == '' ? anio = getDate.getFullYear() : anio;     mes == '' ? mes = getDate.getMonth()+1 : mes;
 
-            console.log(red, dist, anio, mes);
-
-            url_ = window.location.origin + window.location.pathname + '/print?r=' + (red) + '&d=' + (dist) + '&a=' + (anio)
-            + '&m=' + (mes);
-            console.log(url_);
+            url_ = window.location.origin + window.location.pathname + '/print?r=' + (red) + '&d=' + (dist) + '&a=' + (anio) + '&m=' + (mes);
             window.open(url_,'_blank');
         },
     }

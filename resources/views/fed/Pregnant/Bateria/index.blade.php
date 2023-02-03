@@ -3,6 +3,7 @@
 @section('content')
     <div class="content-wrapper" id="appBateria">
         <section class="content">
+            <div class="overlay-wrapper"></div>
             <section class="content-header">
                 <div class="container-fluid">
                     <div class="row">
@@ -102,7 +103,7 @@
                             <button type="submit" id="export_data" name="exportarCSV" class="btn btn-outline-success m-1 btn-sm mb-2 font-11" @click="PrintNominal"><i class="fa fa-print"></i> Imprimir</button>
                             <button type="button" class="btn btn-outline-danger m-1 btn-sm btn_information mb-2 font-11" data-toggle="modal" data-target="#ModalInformacion"><i class="fa fa-list"></i> Ficha</button>
                             <a href="{{ url('/dashboard') }}" class="btn btn-outline-secondary btn-sm m-1 mb-2 font-11"><i class="fa fa-reply"></i> Regresar</a>
-                            <button class="btn btn-outline-primary m-1 btn-sm mb-2 font-11" @click="listBateria"><i class="fa fa-check"></i> Ver Todo</button>
+                            <button class="btn btn-outline-primary m-1 btn-sm mb-2 font-11" @click="searchBateria"><i class="fa fa-check"></i> Ver Todo</button>
                         </div>
                         <div class="col-md-4 col-sm-4">
                             <div id="table_resume">
@@ -183,7 +184,7 @@
                                         </div>
                                         <div class="col-md-12 p-0">
                                             <div class="d-flex justify-content-center">
-                                                <button class="btn btn-primary btn-sm m-1 font-11" id="search" type="button" @click="listBateria"><i class="fa fa-search"></i> Buscar</button>
+                                                <button class="btn btn-primary btn-sm m-1 font-11" id="search" type="button" @click="searchBateria"><i class="fa fa-search"></i> Buscar</button>
                                                 <button class="btn btn-secondary btn-sm m-1 font-11" type="button" id="clear2"><i class="fa fa-broom"></i> Limpiar</button>
                                             </div>
                                         </div>
@@ -302,12 +303,6 @@
         </div>
     </div>
     <script src="./js/fed/pregnant/vue/bateria.js"></script>
-    <script>
-        $(document).ready(function(){
-            $("#search").click();
-        });
-    </script>
-
 @endsection
 
 @section('javascript')

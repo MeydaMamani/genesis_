@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers\Fed;
 
+use App\Exports\Fed\Pregnant\ApnExport;
 use App\Exports\Fed\Pregnant\BateriaExport;
 use App\Exports\SospechaVioExport;
 use App\Exports\UsersNewExport;
@@ -13,7 +14,127 @@ use Maatwebsite\Excel\Concerns\FromView;
 
 class PregnantController extends Controller
 {
-    public function indexBateria(Request $request) {
+    public function indexApn() {
+        return view('fed/Pregnant/Apn/index');
+    }
+
+    public function listApn(Request $request){
+        $red_1 = $request->red;
+        $dist = $request->distrito;
+        $anio = $request->anio;
+        $mes = $request->mes;
+
+        if ($red_1 == '01') { $red = 'PASCO'; }
+        elseif ($red_1 == '02') { $red = 'DANIEL ALCIDES CARRION'; }
+        elseif ($red_1 == '03') { $red = 'OXAPAMPA'; }
+
+        if($red_1 == 'TODOS'){
+            $nominal = DB::connection('BDHIS_MINSA') ->table('dbo.T_CONSOLIDADO_NUEVA_TRAMA_HISMINSA')
+                        ->select('Provincia_Establecimiento', 'Distrito_Establecimiento', 'Nombre_Establecimiento', 'Abrev_Tipo_Doc_Paciente',
+                        'Numero_Documento_Paciente', 'Fecha_Nacimiento_Paciente', 'Codigo_Item', 'Fecha_Atencion', (DB::raw("CASE WHEN CODIGO_ITEM
+                        IN ('Z3491','Z3591') and Valor_Lab='1' THEN 'SI' ELSE 'NO' END MIDE")))
+                        ->whereIn('CODIGO_ITEM', ['Z3491','Z3492','Z3493','Z3591','Z3592','Z3593']) ->where('Valor_Lab', '1')
+                        ->where('Genero', 'f') ->where('Abrev_Tipo_Doc_Paciente', 'DNI') ->whereNotIn('Codigo_Unico', ['000000979','000000980','000000981'])
+                        ->where('ANIO', $anio) ->where('MES', $mes) ->orderBy('Provincia_Establecimiento', 'ASC')
+                        ->orderBy('Distrito_Establecimiento', 'ASC') ->orderBy('Nombre_Establecimiento', 'ASC')
+                        ->get();
+
+            $t_resume = DB::connection('BDHIS_MINSA') ->table('dbo.T_CONSOLIDADO_NUEVA_TRAMA_HISMINSA')
+                        ->select('Provincia_Establecimiento','Distrito_Establecimiento',(DB::raw("COUNT(*) AS DENOMINADOR")),
+                            (DB::raw("SUM(CASE WHEN CODIGO_ITEM IN ('Z3491','Z3591') and Valor_Lab='1' THEN 1 ELSE 0 END) NUMERADOR")))
+                        ->whereIn('CODIGO_ITEM', ['Z3491','Z3492','Z3493','Z3591','Z3592','Z3593']) ->where('Valor_Lab', '1')
+                        ->where('Genero', 'f') ->where('Abrev_Tipo_Doc_Paciente', 'DNI') ->whereNotIn('Codigo_Unico', ['000000979','000000980','000000981'])
+                        ->where('ANIO', $anio) ->where('MES', $mes) ->groupBy('Provincia_Establecimiento') ->groupBy('Distrito_Establecimiento')
+                        ->orderBy('Provincia_Establecimiento', 'ASC') ->orderBy('Distrito_Establecimiento', 'ASC')
+                        ->get();
+
+            $resum_red = DB::connection('BDHIS_MINSA') ->table('dbo.T_CONSOLIDADO_NUEVA_TRAMA_HISMINSA')
+                        ->select('Provincia_Establecimiento', (DB::raw("COUNT(*) AS DENOMINADOR")),
+                            (DB::raw("SUM(CASE WHEN CODIGO_ITEM IN ('Z3491','Z3591') and Valor_Lab='1' THEN 1 ELSE 0 END) NUMERADOR")))
+                        ->whereIn('CODIGO_ITEM', ['Z3491','Z3492','Z3493','Z3591','Z3592','Z3593']) ->where('Valor_Lab', '1')
+                        ->where('Genero', 'f') ->where('Abrev_Tipo_Doc_Paciente', 'DNI') ->whereNotIn('Codigo_Unico', ['000000979','000000980','000000981'])
+                        ->where('ANIO', $anio) ->where('MES', $mes) ->groupBy('Provincia_Establecimiento')
+                        ->orderBy('Provincia_Establecimiento', 'ASC')
+                        ->get();
+        }
+        else if($red_1 != 'TODOS' && $dist == 'TODOS'){
+            $nominal = DB::connection('BDHIS_MINSA') ->table('dbo.T_CONSOLIDADO_NUEVA_TRAMA_HISMINSA')
+                        ->select('Provincia_Establecimiento', 'Distrito_Establecimiento', 'Nombre_Establecimiento', 'Abrev_Tipo_Doc_Paciente',
+                        'Numero_Documento_Paciente', 'Fecha_Nacimiento_Paciente', 'Codigo_Item', 'Fecha_Atencion', (DB::raw("CASE WHEN CODIGO_ITEM
+                        IN ('Z3491','Z3591') and Valor_Lab='1' THEN 'SI' ELSE 'NO' END MIDE"))) ->where('Valor_Lab', '1')
+                        ->where('Provincia_Establecimiento', $red) ->whereIn('CODIGO_ITEM', ['Z3491','Z3492','Z3493','Z3591','Z3592','Z3593'])
+                        ->where('Genero', 'f') ->where('Abrev_Tipo_Doc_Paciente', 'DNI') ->whereNotIn('Codigo_Unico', ['000000979','000000980','000000981'])
+                        ->where('ANIO', $anio) ->where('MES', $mes) ->orderBy('Provincia_Establecimiento', 'ASC')
+                        ->orderBy('Distrito_Establecimiento', 'ASC') ->orderBy('Nombre_Establecimiento', 'ASC')
+                        ->get();
+
+            $t_resume = DB::connection('BDHIS_MINSA') ->table('dbo.T_CONSOLIDADO_NUEVA_TRAMA_HISMINSA')
+                        ->select('Provincia_Establecimiento','Distrito_Establecimiento',(DB::raw("COUNT(*) AS DENOMINADOR")),
+                            (DB::raw("SUM(CASE WHEN CODIGO_ITEM IN ('Z3491','Z3591') and Valor_Lab='1' THEN 1 ELSE 0 END) NUMERADOR")))
+                        ->whereIn('CODIGO_ITEM', ['Z3491','Z3492','Z3493','Z3591','Z3592','Z3593']) ->where('Valor_Lab', '1')
+                        ->where('Provincia_Establecimiento', $red) ->where('Genero', 'f') ->where('Abrev_Tipo_Doc_Paciente', 'DNI')
+                        ->whereNotIn('Codigo_Unico', ['000000979','000000980','000000981']) ->where('ANIO', $anio) ->where('MES', $mes)
+                        ->groupBy('Provincia_Establecimiento') ->groupBy('Distrito_Establecimiento')
+                        ->orderBy('Provincia_Establecimiento', 'ASC') ->orderBy('Distrito_Establecimiento', 'ASC')
+                        ->get();
+
+            $resum_red = DB::connection('BDHIS_MINSA') ->table('dbo.T_CONSOLIDADO_NUEVA_TRAMA_HISMINSA')
+                        ->select('Provincia_Establecimiento', (DB::raw("COUNT(*) AS DENOMINADOR")),
+                            (DB::raw("SUM(CASE WHEN CODIGO_ITEM IN ('Z3491','Z3591') and Valor_Lab='1' THEN 1 ELSE 0 END) NUMERADOR")))
+                        ->whereIn('CODIGO_ITEM', ['Z3491','Z3492','Z3493','Z3591','Z3592','Z3593']) ->where('Valor_Lab', '1')
+                        ->where('Provincia_Establecimiento', $red) ->where('Genero', 'f') ->where('Abrev_Tipo_Doc_Paciente', 'DNI')
+                        ->whereNotIn('Codigo_Unico', ['000000979','000000980','000000981']) ->where('ANIO', $anio) ->where('MES', $mes)
+                        ->groupBy('Provincia_Establecimiento') ->orderBy('Provincia_Establecimiento', 'ASC')
+                        ->get();
+        }
+        else if($dist != 'TODOS'){
+            $nominal = DB::connection('BDHIS_MINSA') ->table('dbo.T_CONSOLIDADO_NUEVA_TRAMA_HISMINSA')
+                        ->select('Provincia_Establecimiento', 'Distrito_Establecimiento', 'Nombre_Establecimiento', 'Abrev_Tipo_Doc_Paciente',
+                        'Numero_Documento_Paciente', 'Fecha_Nacimiento_Paciente', 'Codigo_Item', 'Fecha_Atencion', (DB::raw("CASE WHEN CODIGO_ITEM
+                        IN ('Z3491','Z3591') and Valor_Lab='1' THEN 'SI' ELSE 'NO' END MIDE"))) ->where('Valor_Lab', '1')
+                        ->where('Distrito_Establecimiento', $dist) ->whereIn('CODIGO_ITEM', ['Z3491','Z3492','Z3493','Z3591','Z3592','Z3593'])
+                        ->where('Genero', 'f') ->where('Abrev_Tipo_Doc_Paciente', 'DNI') ->whereNotIn('Codigo_Unico', ['000000979','000000980','000000981'])
+                        ->where('ANIO', $anio) ->where('MES', $mes) ->orderBy('Provincia_Establecimiento', 'ASC')
+                        ->orderBy('Distrito_Establecimiento', 'ASC') ->orderBy('Nombre_Establecimiento', 'ASC')
+                        ->get();
+
+            $t_resume = DB::connection('BDHIS_MINSA') ->table('dbo.T_CONSOLIDADO_NUEVA_TRAMA_HISMINSA')
+                        ->select('Provincia_Establecimiento','Distrito_Establecimiento',(DB::raw("COUNT(*) AS DENOMINADOR")),
+                            (DB::raw("SUM(CASE WHEN CODIGO_ITEM IN ('Z3491','Z3591') and Valor_Lab='1' THEN 1 ELSE 0 END) NUMERADOR")))
+                        ->whereIn('CODIGO_ITEM', ['Z3491','Z3492','Z3493','Z3591','Z3592','Z3593']) ->where('Valor_Lab', '1')
+                        ->where('Distrito_Establecimiento', $dist) ->where('Genero', 'f') ->where('Abrev_Tipo_Doc_Paciente', 'DNI')
+                        ->whereNotIn('Codigo_Unico', ['000000979','000000980','000000981']) ->where('ANIO', $anio) ->where('MES', $mes)
+                        ->groupBy('Provincia_Establecimiento') ->groupBy('Distrito_Establecimiento')
+                        ->orderBy('Provincia_Establecimiento', 'ASC') ->orderBy('Distrito_Establecimiento', 'ASC')
+                        ->get();
+
+            $resum_red = DB::connection('BDHIS_MINSA') ->table('dbo.T_CONSOLIDADO_NUEVA_TRAMA_HISMINSA')
+                        ->select('Provincia_Establecimiento', (DB::raw("COUNT(*) AS DENOMINADOR")),
+                            (DB::raw("SUM(CASE WHEN CODIGO_ITEM IN ('Z3491','Z3591') and Valor_Lab='1' THEN 1 ELSE 0 END) NUMERADOR")))
+                        ->whereIn('CODIGO_ITEM', ['Z3491','Z3492','Z3493','Z3591','Z3592','Z3593']) ->where('Valor_Lab', '1')
+                        ->where('Distrito_Establecimiento', $dist) ->where('Genero', 'f') ->where('Abrev_Tipo_Doc_Paciente', 'DNI')
+                        ->whereNotIn('Codigo_Unico', ['000000979','000000980','000000981']) ->where('ANIO', $anio) ->where('MES', $mes)
+                        ->groupBy('Provincia_Establecimiento') ->orderBy('Provincia_Establecimiento', 'ASC')
+                        ->get();
+        }
+
+        $q[] = json_decode($nominal, true);
+        $q[] = json_decode($t_resume, true);
+        $q[] = json_decode($resum_red, true);
+        $r = json_encode($q);
+        return response(($r), 200);
+    }
+
+    public function printApn(Request $request){
+        $r = $request->r;
+        $d = $request->d;
+        $a = $request->a;
+        $m = $request->m;
+
+        return Excel::download(new ApnExport($r, $d, $a, $m), 'DEIT_PASCO PRIMERA ATENCIÓN PRENATAL.xlsx');
+    }
+
+    public function indexBateria() {
         return view('fed/Pregnant/Bateria/index');
     }
 
@@ -124,7 +245,7 @@ class PregnantController extends Controller
         return Excel::download(new BateriaExport($r, $d, $a, $m), 'DEIT_PASCO CG_FT_BATERIA_COMPLETA.xlsx');
     }
 
-    public function indexTratamiento(Request $request) {
+    public function indexTratamiento() {
         return view('fed/Pregnant/sospecha_tratamiento/index');
     }
 
@@ -134,9 +255,6 @@ class PregnantController extends Controller
         $anio = $request->anio;
         $mes = $request->mes;
 
-        if (strlen($mes) == 1){ $mes2 = '0'.$mes; }
-        else{ $mes2 = $mes; }
-
         if ($red_1 == '01') { $red = 'PASCO'; }
         elseif ($red_1 == '02') { $red = 'DANIEL CARRION'; }
         elseif ($red_1 == '03') { $red = 'OXAPAMPA'; }
@@ -144,25 +262,21 @@ class PregnantController extends Controller
         if($red_1 == 'TODOS'){
             $nominal = DB::table('dbo.CONSOLIDADO_SOSPECHA')
                         ->select('*') ->where('ANIO', $anio) ->where('MES', $mes)
-                        ->orderBy('Provincia_Establecimiento', 'ASC') ->orderBy('Distrito_Establecimiento', 'ASC') ->orderBy('ATENDIDOS', 'ASC')
+                        ->orderBy('Provincia_Establecimiento', 'ASC') ->orderBy('Distrito_Establecimiento', 'ASC')
                         ->get();
 
-            $t_resume = DB::table('DEN_SOSPECHA')
-                        ->select('DEN_SOSPECHA.Provincia_Establecimiento','DEN_SOSPECHA.Distrito_Establecimiento','DEN_SOSPECHA.DENOMINADOR', 'NUM_SOSPECHA.NUMERADOR')
-                        ->leftJoin('NUM_SOSPECHA', 'DEN_SOSPECHA.Distrito_Establecimiento', '=', 'NUM_SOSPECHA.Distrito_Establecimiento')
-                        ->where('DEN_SOSPECHA.DENOMINADOR', '>', '0')
-                        ->where('DEN_SOSPECHA.Anio', $anio) ->where('NUM_SOSPECHA.Anio', $anio)
-                        ->where('DEN_SOSPECHA.Mes', $mes) ->where('NUM_SOSPECHA.Mes', $mes)
-                        ->orderBy('DEN_SOSPECHA.Provincia_Establecimiento', 'ASC') ->orderBy('DEN_SOSPECHA.Distrito_Establecimiento', 'ASC')
+            $t_resume = DB::table('dbo.CONSOLIDADO_SOSPECHA')
+                        ->select('Provincia_Establecimiento','Distrito_Establecimiento', (DB::raw('COUNT(*) DENOMINADOR')), (DB::raw("COUNT(CASE WHEN (MIDE='SI') THEN 'SI' END) 'NUMERADOR'")),
+                        (DB::raw("round((cast(COUNT( CASE WHEN (MIDE='SI') THEN 'SI' END) as float) / cast(COUNT(*) as float) * 100), 1) 'AVANCE'")))
+                        ->where('Anio', $anio) ->where('Mes', $mes) ->groupBy('Provincia_Establecimiento') ->groupBy('Distrito_Establecimiento')
+                        ->orderBy('Provincia_Establecimiento', 'ASC') ->orderBy('Distrito_Establecimiento', 'ASC')
                         ->get();
 
-            $resum_red = DB::table('DEN_SOSPECHA')
-                        ->select('DEN_SOSPECHA.Provincia_Establecimiento', (DB::raw('SUM(DEN_SOSPECHA.DENOMINADOR) AS DEN')), (DB::raw('SUM(NUM_SOSPECHA.NUMERADOR) AS NUM')))
-                        ->leftJoin('NUM_SOSPECHA', 'DEN_SOSPECHA.Distrito_Establecimiento', '=', 'NUM_SOSPECHA.Distrito_Establecimiento')
-                        ->where('DEN_SOSPECHA.Anio', $anio) ->where('NUM_SOSPECHA.Anio', $anio)
-                        ->where('DEN_SOSPECHA.Mes', $mes) ->where('NUM_SOSPECHA.Mes', $mes)
-                        ->where('DEN_SOSPECHA.DENOMINADOR', '>', '0')
-                        ->groupBy('DEN_SOSPECHA.Provincia_Establecimiento') ->orderBy('DEN_SOSPECHA.Provincia_Establecimiento', 'ASC')
+            $resum_red = DB::table('dbo.CONSOLIDADO_SOSPECHA')
+                        ->select('Provincia_Establecimiento', (DB::raw('COUNT(*) DENOMINADOR')), (DB::raw("COUNT(CASE WHEN (MIDE='SI') THEN 'SI' END) 'NUMERADOR'")),
+                        (DB::raw("round((cast(COUNT( CASE WHEN (MIDE='SI') THEN 'SI' END) as float) / cast(COUNT(*) as float) * 100), 1) 'AVANCE'")))
+                        ->where('Anio', $anio) ->where('Mes', $mes) ->groupBy('Provincia_Establecimiento')
+                        ->orderBy('Provincia_Establecimiento', 'ASC')
                         ->get();
         }
         else if($red_1 != 'TODOS' && $dist == 'TODOS'){
@@ -359,7 +473,7 @@ class PregnantController extends Controller
         return response(($r), 200);
     }
 
-    public function indexNewUsers(Request $request) {
+    public function indexNewUsers() {
         return view('fed/Pregnant/NewUsers/index');
     }
 
