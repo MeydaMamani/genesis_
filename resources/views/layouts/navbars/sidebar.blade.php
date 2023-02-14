@@ -89,21 +89,33 @@
                             </a>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
+                                    <a href="{{ url('/apn') }}" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Primera Aten. Prenatal</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
                                     <a href="{{ url('/bateria') }}" class="nav-link">
                                         <i class="far fa-circle nav-icon"></i>
-                                        <p>Bateria Completa (CG01)</p>
+                                        <p>Bateria Completa</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
                                     <a href="{{ url('/tratamiento') }}" class="nav-link">
                                         <i class="far fa-circle nav-icon"></i>
-                                        <p>Tmz e Inicio de Tratamiento por Violencia</p>
+                                        <p>Sospecha e Inicio de Tto</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
                                     <a href="{{ url('/newUsers') }}" class="nav-link">
                                         <i class="far fa-circle nav-icon"></i>
-                                        <p>Usuarias Nuevas con Tmz de Violencia (GG-VI02)</p>
+                                        <p>Usuarias Nuevas con Tmz de Violencia</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ url('/packageGest') }}" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Paquete Completo</p>
                                     </a>
                                 </li>
                             </ul>
@@ -140,146 +152,6 @@
                             <a href="{{ url('/patient') }}" class="nav-link">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Detalle Paciente</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Niños</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Padrón Nominal</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Desparasitación</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Homologación</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ url('/filePlane') }}" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Archivos Planos</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Promsa</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>R40</p>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <i><img src="{{ asset('./img/menu/indicartors.png') }}" width="30" alt="imagen-ind"></i>
-                        <p class="ml-2">Indicadores Diresa <i class="right fas fa-angle-left"></i></p>
-                    </a>
-                    <ul class="nav nav-treeview">
-                        <li class="nav-item">
-                            <a href="{{ url('/conventions') }}" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Convenios de Gestión</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Programas Presupuestales</p>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <i><img src="{{ asset('./img/menu/covid.png') }}" width="30" alt="imagen-covid"></i>
-                        <p class="ml-2">Covid 19 <i class="right fas fa-angle-left"></i></p>
-                    </a>
-                    <ul class="nav nav-treeview">
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Consentimiento</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Consulta de Vacunación</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Consulta Padrón</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Vacunación Covid</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Consolidado Vacuna</p>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <i><img src="{{ asset('./img/menu/padron.png') }}" width="30" alt="imagen-pn"></i>
-                        <p class="ml-2">Padrón Nominal <i class="right fas fa-angle-left"></i></p>
-                    </a>
-                    <ul class="nav nav-treeview">
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Padrón Niños</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Padrón Gestantes</p>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <i><img src="{{ asset('./img/menu/analytics.png') }}" width="30" alt="imagen-analy"></i>
-                        <p class="ml-2">Tablero <i class="right fas fa-angle-left"></i></p>
-                    </a>
-                    <ul class="nav nav-treeview">
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Tablero</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Avance Convenios de Gestión</p>
                             </a>
                         </li>
                     </ul>

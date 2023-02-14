@@ -48,7 +48,8 @@ $(function () {
   })
 
   /* jQueryKnob */
-  $('.knob').knob()
+  $('.knob').knob();
+  $('.knob2').knob();
 
   // jvectormap data
   var visitorsData = {

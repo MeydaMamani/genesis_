@@ -51,6 +51,7 @@ class RouteServiceProvider extends ServiceProvider
                     require base_path('routes/FED/pregnant/pregnant.php');
                     require base_path('routes/FED/professionals/professionals.php');
                     require base_path('routes/FED/sisCovid/sisCovid.php');
+                    require base_path('routes/DetailPatient/patient.php');
                 });
         });
     }

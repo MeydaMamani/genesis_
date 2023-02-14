@@ -38,6 +38,9 @@
         <!-- Toastr -->
         <link rel="stylesheet" href="plugins/toastr/toastr.min.css">
 
+        <!-- SweetAlert2 -->
+        <link rel="stylesheet" href="plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+
         <link rel="stylesheet" href="{{ asset('./css/styleFed.css') }}"/>
         <link rel="stylesheet" href="{{ asset('./css/style.css') }}"/>
 
@@ -53,6 +56,16 @@
         <script src="./plugins/vue/vue.js"></script>
 
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
+
+        <!-- link para iconos -->
+        <link rel="stylesheet" href="./css/materialdesignicons.css">
+        <link rel="stylesheet" href="./css/materialdesignicons.min.css">
+
+        <!-- estilos css -->
+        <link rel="stylesheet" href="{{ asset('./css/styleVaccine.css') }}"/>
+        <link rel="stylesheet" href="{{ asset('./css/stylePregnant.css') }}"/>
+        <script src="./js/hammer/hammer.min.js"></script>
+
         @yield('css')
     </head>
     <body class="hold-transition sidebar-mini layout-fixed">
@@ -101,7 +114,8 @@
         <script src="dist/js/demo.js"></script>
         <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
         <script src="dist/js/pages/dashboard.js"></script>
-
+        <!-- SweetAlert2 -->
+        <script src="plugins/sweetalert2/sweetalert2.min.js"></script>
         <!-- Select2 -->
         <script src="plugins/select2/js/select2.full.min.js"></script>
         <script>

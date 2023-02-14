@@ -44,15 +44,18 @@ $(window).on('load', function() {
 		filtering.trigger('footable_filter', {filter: $(this).val()});
 	});
 
-
-	
-
 	// Search input
 	$('#demo-input-search2').on('input', function (e) {
 		e.preventDefault();
+		addrow2.trigger('footable_filter', {filter: $(this).val()});
+	});
+
+	// Search input
+	$('#demo-input-search').on('input', function (e) {
+		e.preventDefault();
 		addrow.trigger('footable_filter', {filter: $(this).val()});
 	});
-	
+
 	// Add & Remove Row
 	var addrow = $('#demo-foo-addrow');
 	addrow.footable().on('click', '.delete-row-btn', function() {
@@ -66,11 +69,11 @@ $(window).on('load', function() {
 		//delete the row
 		footable.removeRow(row);
 	});
-    var addrow = $('#demo-foo-addrow2');
-	addrow.footable().on('click', '.delete-row-btn', function() {
+    var addrow2 = $('#demo-foo-addrow2');
+	addrow2.footable().on('click', '.delete-row-btn', function() {
 
 		//get the footable object
-		var footable = addrow.data('footable');
+		var footable = addrow2.data('footable');
 
 		//get the row we are wanting to delete
 		var row = $(this).parents('tr:first');

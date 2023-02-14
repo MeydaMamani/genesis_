@@ -185,7 +185,7 @@ div#info {
     transition: opacity 0.3s;
     border-radius: .25rem;
     z-index: 99;
-    margin-left: -4px;
+    margin-left: -8px;
 }
 
 div#all:hover div#info {
@@ -195,7 +195,7 @@ div#all:hover div#info {
 /* PARA BARRA DE PROGRESO */
 
 .info-box .progress {
-    height: 4px;
+    height: 5px;
 }
 
 /* PARA TABLAS */
@@ -331,7 +331,7 @@ div#all:hover div#info {
 
 
 .table-responsive#profesional {
-    height: 430px;
+    height: 440px;
     overflow: auto;
 }
 
